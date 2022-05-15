@@ -12,4 +12,4 @@ Numpy
 Tensorflow  
 Keras  
 
-![Different k](./Result//Different k.png)
+![Different k](DL_Communication_System/Result/Common CNN compare to Turbo AE-MOD/Different k.png)
