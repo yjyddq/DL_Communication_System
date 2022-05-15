@@ -1,8 +1,8 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Conv1D
 
-from communication.Communication_DL.Coding_Unit.Iteration_dec import Iteration_dec_CNN_SBI,Iteration_dec_CNN_PRI,Iteration_dec_RNN_SBI,Iteration_dec_RNN_PRI
-from communication.Communication_DL.Coding_Unit.Modulation import DeModulator
+from DL_Communication_System.Coding_Unit.Iteration_dec import Iteration_dec_CNN_SBI,Iteration_dec_CNN_PRI,Iteration_dec_RNN_SBI,Iteration_dec_RNN_PRI
+from DL_Communication_System.Coding_Unit.Modulation import DeModulator
 
 '''CNN'''
 class Decoder_CNN_PRI(tf.keras.layers.Layer):
@@ -93,8 +93,6 @@ class Decoder_CNN_SBI(tf.keras.layers.Layer):
         return dict(list(base_config.items()) + list(config.items()))
 
 '''RNN'''
-
-
 class Decoder_RNN_PRI(tf.keras.layers.Layer):
     def __init__(self, batch_size, L, dim, k, n):
         super(Decoder_RNN_PRI, self).__init__()
