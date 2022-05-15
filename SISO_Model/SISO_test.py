@@ -81,7 +81,6 @@ for Eb_N0_dB in range(0, 16):
 
     e_power = Lambda(normalization)(e)
 
-    # e_isi = ISI(W)(e_power)
 
     y_h = Rayleigh_Channel(noise_sigma)(e_power)
 
