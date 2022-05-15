@@ -27,7 +27,7 @@ def complex_convert_to_real(xc):
     # shape=(batch_size,L,2)
     return x
 
-'''以下网络层支持复数输入'''
+'''Support Complex Number input'''
 '''Complex Convolutional'''
 def single_complex_conv1d(inputs,filters):
     # inputs shape=(batch_size,kernel_size,input_dim) complex
@@ -43,7 +43,7 @@ def single_complex_conv1d(inputs,filters):
 def bias_add(inputs,bias):
     return inputs+bias
 
-# 中间夹杂复数转换，只要不是将复数输入到网络层中，就是可以进行梯度反传的
+
 class Complex_Conv1D(tf.keras.layers.Layer):
     def __init__(self,filters,kernel_size,strides,padding='valid',activation='linear'):
         super(Complex_Conv1D,self).__init__()
@@ -91,9 +91,6 @@ class Complex_Conv1D(tf.keras.layers.Layer):
             xc= tf.complex(x_Pad_real, x_Pad_imag)
 
         yc = []
-        # 只有当这个range里的数是一个常量的时候
-        # 或者是一个全局变量时，这种用法才可以构建graph
-        # 如果range里是局部变量，那么则不能构建graph
         for i in range(outputs_side):
             xctmp = tf.slice(xc, [0, i * self.strides, 0], [tf.shape(xc)[0], self.kernel_size, tf.shape(xc)[-1]])
             # (batch_size,kernel_size,input_dim)
@@ -171,13 +168,13 @@ class Complex_Dense(tf.keras.layers.Layer):
 
 
 
-'''以下网络层支持实部虚部输入'''
+'''Supprot Real Number input'''
 '''Complex LSTM'''
 # tensorflow 中的RNN后端就是用for循环实现的
 class ComplexLSTMCell(tf.keras.layers.Layer):
     def __init__(self,units):
         super(ComplexLSTMCell,self).__init__()
-        self.units = units # 这里的units指的是实部虚部分别为多少维度
+        self.units = units 
         self.state_size = [2*self.units, 2*self.units]
     def build(self,input_shape):
         self.kernel_real = self.add_weight(shape=(input_shape[-1]//2, 4*self.units),
@@ -213,7 +210,7 @@ class ComplexLSTMCell(tf.keras.layers.Layer):
         c_tm1_real, c_tm1_imag = self.split_real_imag(c_tm1)
 
         cell_inputs_real, cell_inputs_imag = self.split_real_imag(cell_inputs) # (batch_size,dim//2)
-        '''计算实部'''
+        '''Compute Real'''
         z_real = backend.dot(cell_inputs_real, self.kernel_real) - backend.dot(cell_inputs_imag, self.kernel_imag)
         z_real += backend.dot(h_tm1_real, self.recurrent_kernel_real) - backend.dot(h_tm1_imag,self.recurrent_kernel_imag)
         z_real = bias_add(z_real, self.bias_real)
@@ -221,7 +218,7 @@ class ComplexLSTMCell(tf.keras.layers.Layer):
 
         z0_real, z1_real, z2_real, z3_real = array_ops.split(z_real, 4, axis=1)
         # (batch_size,units)
-        '''计算虚部'''
+        '''Compute Imag'''
         z_imag = backend.dot(cell_inputs_real, self.kernel_imag) + backend.dot(cell_inputs_imag, self.kernel_real)
         z_imag += backend.dot(h_tm1_real, self.recurrent_kernel_imag) + backend.dot(h_tm1_imag,self.recurrent_kernel_real)
         z_imag = bias_add(z_imag, self.bias_imag)
@@ -262,7 +259,6 @@ class ComplexLSTMCell(tf.keras.layers.Layer):
         return dict(list(base_config.items()) + list(config.items()))
 
 '''Complex Convolutional'''
-# 分成实部虚部进行运算
 class ComplexConv1D(tf.keras.layers.Layer):
     def __init__(self,filters,kernel_size,strides,padding='valid',activation='linear'):
         super(ComplexConv1D,self).__init__()
