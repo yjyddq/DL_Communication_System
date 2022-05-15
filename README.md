@@ -12,4 +12,4 @@ Numpy
 Tensorflow  
 Keras  
 
-![Different k](DL_Communication_System/Result/ComplexNN/Different k.png)
+![pure_TurboAE-MOD compare to Complex_CNN_Modulation](DL_Communication_System/Result/ComplexNN/pure_TurboAE-MOD compare to Complex_CNN_Modulation.png)
