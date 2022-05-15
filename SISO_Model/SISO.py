@@ -1,22 +1,3 @@
-# 以CNN作为编码结构
-# 取kernel_size>1，实现约束度（仿照卷积码）
-# 译码结构采用BiRNN
-# 使用二进制调制BPSK
-# 引入ISI，因为多个时隙，我们是连续进行发送
-# 那么在接收端就难免会发生，t时刻的码元受前L个时刻码元的影响
-# 所以在接收端，我们是实际上接收到的信号是
-# k(L)*x(t-L)+k(L-1)*x(t-L+1)+……k(1)*x(t-1)+x(t)+n(t)
-# k(i)为衰减因子，n(i)为AWGN噪声
-
-# 采用伪随机交织时收敛速度较慢
-# 需要增大epochs，因为随机性更强，所以网络
-# 学习到这种伪随机的规律所需要的时间更长
-# 取epochs为250，模型还未收敛，损失还有下降的余地
-# 我们后续可以试试训练更多的epochs
-
-# 对于Rayleigh信道，不建议使用AWGN信道的初始化
-# 直接从头开始训练
-# 多用户时，再对已有模型进行微调
 import os
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
@@ -575,33 +556,23 @@ decoder = Model(y_h,model_output)
 # Print Model Architecture
 sys_model.summary()
 
-# path_encoder='./'+ 'PRI_1_100_3_2dB_result/'+ 'DeepTurbo_encoder_' + str(k) + '_' + str(L) + '_' + str(n) + '_' + str(2) + 'dB' + ' ' + 'AWGN' + '.h5'
-# encoder.load_weights(path_encoder)
-#
-# path_decoder='./'+ 'PRI_1_100_3_2dB_result/' + 'DeepTurbo_decoder_' + str(k) + '_' + str(L) + '_' + str(n) + '_' + str(2) + 'dB' + ' ' + 'AWGN' + '.h5'
-# decoder.load_weights(path_decoder)
 
 # Compile Model
 sys_model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
-# print('encoder output:', '\n', encoder.predict(vec_one_hot, batch_size=batch_size))
 
-# sys_model.add_loss(tf.reduce_mean(tf.square(source_code-sink_code)))
 
 print('starting train the NN...')
 start = time.perf_counter()
-with tf.device("/cpu:0"):
+
 # TRAINING
-    mod_history = sys_model.fit(vec_one_hot, vec_one_hot,
+mod_history = sys_model.fit(vec_one_hot, vec_one_hot,
                                 batch_size=batch_size,
                                 epochs=epochs,
                                 verbose=1,
                                 shuffle=True, # 对一个batch内的数据进行混洗
                                 validation_split=0.3, callbacks=[modelcheckpoint,reduce_lr,early_stopping])
 
-path_encoder='./' + 'SRI_DeepTurbo_encoder_' + str(k) + '_' + str(L) + '_' + str(n) + '_' + str(train_Eb_dB) + 'dB' + ' ' + 'AWGN' + '.h5'
-encoder.save(path_encoder)
-path_decoder='./' + 'SRI_DeepTurbo_decoder_' + str(k) + '_' + str(L) + '_' + str(n) + '_' + str(train_Eb_dB) + 'dB' + ' ' + 'AWGN' + '.h5'
-decoder.save(path_decoder)
+
 
 end = time.perf_counter()
 
