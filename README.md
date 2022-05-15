@@ -11,3 +11,5 @@ Python
 Numpy  
 Tensorflow  
 Keras  
+
+![Different k](./Result//Different k.png)
