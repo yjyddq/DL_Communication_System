@@ -10,6 +10,10 @@ from keras import backend as KR
 import copy
 import tensorflow as tf
 
+from DL_Communication_System.Coding_Unit.Encoder import Encoder_CNN_PRI
+from DL_Communication_System.Coding_Unit.Decoder import Decoder_CNN_PRI
+from DL_Communication_System.Channel.Channel import OFDM,DeOFDM,AWGN_four_Channel
+from DL_Communication_System.Power_Norm.power_norm import normalization
 
 '''
  --- COMMUNICATION PARAMETERS ---
@@ -51,22 +55,21 @@ Bit_error_rate3 = []
  --- GENERATING INPUT DATA ---
 '''
 
+
 # Generate training binary Data
-# User one
-# Generate training binary Data
-# User one
+# User zero
 train_data0 = np.random.randint(low=0, high=2, size=(num_of_sym, L,1))
 vec_one_hot0 = to_categorical(y=train_data0, num_classes=2)
 
-# User two
+# User one
 train_data1 = np.random.randint(low=0, high=2, size=(num_of_sym, L,1))
 vec_one_hot1 = to_categorical(y=train_data1, num_classes=2)
 
-# User three
+# User two
 train_data2 = np.random.randint(low=0, high=2, size=(num_of_sym, L,1))
 vec_one_hot2 = to_categorical(y=train_data2, num_classes=2)
 
-# User four
+# User three
 train_data3 = np.random.randint(low=0, high=2, size=(num_of_sym, L,1))
 vec_one_hot3 = to_categorical(y=train_data3, num_classes=2)
 
@@ -91,10 +94,10 @@ for Eb_N0_dB in range(0,16):
     model_input3 = Input(batch_shape=(batch_size, L,1),name='inputs3')
 
 
-    e0 = EncoderSISO(L,name='encoder0')(model_input0)
-    e1 = EncoderSISO(L,name='encoder1')(model_input1)
-    e2 = EncoderSISO(L,name='encoder2')(model_input2)
-    e3 = EncoderSISO(L,name='encoder3')(model_input3)
+    e0 = Encoder_CNN_PRI(batch_size,L,dim,k,n,name='encoder0')(model_input0)
+    e1 = Encoder_CNN_PRI(batch_size,L,dim,k,n,name='encoder1')(model_input1)
+    e2 = Encoder_CNN_PRI(batch_size,L,dim,k,n,name='encoder2')(model_input2)
+    e3 = Encoder_CNN_PRI(batch_size,L,dim,k,n,name='encoder3')(model_input3)
 
     f = OFDM(m,name='OFDM')(e0,e1,e2,e3)
 
@@ -103,10 +106,10 @@ for Eb_N0_dB in range(0,16):
 
     d0,d1,d2,d3=DeOFDM(m,name='DeOFDM')(y_h)
 
-    model_output0 = DecoderSISO(L,name='decoder0')(d0)
-    model_output1 = DecoderSISO(L,name='decoder1')(d1)
-    model_output2 = DecoderSISO(L,name='decoder2')(d2)
-    model_output3 = DecoderSISO(L,name='decoder3')(d3)
+    model_output0 = Decoder_CNN_PRI(batch_size,L,dim,k,n,name='decoder0')(d0)
+    model_output1 = Decoder_CNN_PRI(batch_size,L,dim,k,n,name='decoder1')(d1)
+    model_output2 = Decoder_CNN_PRI(batch_size,L,dim,k,n,name='decoder2')(d2)
+    model_output3 = Decoder_CNN_PRI(batch_size,L,dim,k,n,name='decoder3')(d3)
 
     # Build System Model
     sys_model = Model(inputs=[model_input0,model_input1,model_input2,model_input3], outputs=[model_output0,model_output1,model_output2,model_output3])
