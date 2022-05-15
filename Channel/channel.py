@@ -3,7 +3,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 from keras import backend as KR
 import tensorflow as tf
 from tensorflow.keras.layers import Dense,LSTM,Lambda
-from communication.Communication_DL.Power_Norm.power_norm import normalization
+from DL_Communication_System.Power_Norm.power_norm import normalization
 
 import numpy as np
 
