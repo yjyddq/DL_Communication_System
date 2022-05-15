@@ -111,27 +111,26 @@ modelcheckpoint = ModelCheckpoint(filepath='./' + 'model_four_users_' + str(k) +
  --- CUSTOMIZED NETWORK LAYERS ---
 '''
 
-model_input0 = Input(batch_shape=(batch_size, L,1))
-model_input1 = Input(batch_shape=(batch_size, L,1))
-model_input2 = Input(batch_shape=(batch_size, L,1))
-model_input3 = Input(batch_shape=(batch_size, L,1))
+model_input0 = Input(batch_shape=(batch_size, L,1),name='inputs0')
+model_input1 = Input(batch_shape=(batch_size, L,1),name='inputs1')
+model_input2 = Input(batch_shape=(batch_size, L,1),name='inputs2')
+model_input3 = Input(batch_shape=(batch_size, L,1),name='inputs3')
 
-e0 = Encoder_CNN_PRI(batch_size,L,dim,k,n)(model_input0)
-e1 = Encoder_CNN_PRI(batch_size,L,dim,k,n)(model_input1)
-e2 = Encoder_CNN_PRI(batch_size,L,dim,k,n)(model_input2)
-e3 = Encoder_CNN_PRI(batch_size,L,dim,k,n)(model_input3)
+e0 = Encoder_CNN_PRI(batch_size,L,dim,k,n,name='encoder0')(model_input0)
+e1 = Encoder_CNN_PRI(batch_size,L,dim,k,n,name='encoder1')(model_input1)
+e2 = Encoder_CNN_PRI(batch_size,L,dim,k,n,name='encoder2')(model_input2)
+e3 = Encoder_CNN_PRI(batch_size,L,dim,k,n,name='encoder3')(model_input3)
 
-f = OFDM(m)(e0,e1,e2,e3)
+f = OFDM(m,name='OFDM')(e0,e1,e2,e3)
 
-y_h = AWGN_four_Channel(noise_sigma)(f)
+y_h = AWGN_four_Channel(noise_sigma,name='Channel')(f)
 
-# Output One hot vector and use Softmax to soft decoding
-d0,d1,d2,d3=DeOFDM(m)(y_h)
+d0,d1,d2,d3=DeOFDM(m,name='DeOFDM')(y_h)
 
-model_output0 = Decoder_CNN_PRI(batch_size,L,dim,k,n)(d0)
-model_output1 = Decoder_CNN_PRI(batch_size,L,dim,k,n)(d1)
-model_output2 = Decoder_CNN_PRI(batch_size,L,dim,k,n)(d2)
-model_output3 = Decoder_CNN_PRI(batch_size,L,dim,k,n)(d3)
+model_output0 = Decoder_CNN_PRI(batch_size,L,dim,k,n,name='decoder0')(d0)
+model_output1 = Decoder_CNN_PRI(batch_size,L,dim,k,n,name='decoder1')(d1)
+model_output2 = Decoder_CNN_PRI(batch_size,L,dim,k,n,name='decoder2')(d2)
+model_output3 = Decoder_CNN_PRI(batch_size,L,dim,k,n,name='decoder3')(d3)
 
 # Build System Model
 sys_model = Model([model_input0,model_input1,model_input2,model_input3], [model_output0,model_output1,model_output2,model_output3])
