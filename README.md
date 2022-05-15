@@ -9,3 +9,8 @@ Design scheme of auto-encoder-based end-to-end physical layer combined with deep
 ## **Auther**
 *Yang jingyi*.
 
+## **Dependency**
+Python
+Numpy
+Tensorflow
+Keras
