@@ -1,6 +1,3 @@
-# 使用OFDM调制方案
-# AWGN信道下，使用OFDM足够能解决问题
-# 但是Rayleigh信道时，OFDM欠佳
 import os
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
@@ -17,13 +14,13 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from tensorflow.keras.optimizers import Adam
 
-# from communication.Turbo_DL.Coding_Unit.coding_unit import coding_unit
-# from communication.Turbo_DL.Interleaver.Block import Se_Block_Interleaver,Se_Block_DeInterleaver
-# from communication.Turbo_DL.Interleaver.Pseudo_random import Pseudo_random_Interleaver,Pseudo_random_DeInterleaver
-# from communication.Turbo_DL.Modulation.Modulation import Modulation
-# from communication.Turbo_DL.Modulation.DeModulation import DeModulation
-# from communication.Turbo_DL.Coding_Unit.Iteration_dec import Iteration_dec_CNN_PI
-# from communication.Turbo_DL.Channel.Channel import normalization,ISI,DeISI,AWGN_Channel,Bursty_Channel,Multiplexing,DeMultiplexing,Rayleigh_Channel
+from DL_Communication_System.Coding_Unit.coding_unit import coding_unit
+from DL_Communication_System.Interleaver.Block import Se_Block_Interleaver,Se_Block_DeInterleaver
+from DL_Communication_System.Interleaver.Pseudo_Random import Pseudo_random_Interleaver,Pseudo_random_DeInterleaver
+from DL_Communication_System.Modulation.Modulation import Modulation
+from DL_Communication_System.Modulation.DeModulation import DeModulation
+from DL_Communication_System.Coding_Unit.Iteration_dec import Iteration_dec_CNN_PI
+from DL_Communication_System.Channel.Channel import normalization,ISI,DeISI,AWGN_Channel,Bursty_Channel,Multiplexing,DeMultiplexing,Rayleigh_Channel
 
 '''
  --- COMMUNICATION PARAMETERS ---
