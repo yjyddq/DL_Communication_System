@@ -2,7 +2,6 @@ import tensorflow as tf
 import numpy as np
 
 
-# 伪随机交织器
 class Pseudo_random_Interleaver(tf.keras.layers.Layer):
     def __init__(self, batch_size, L, dim):
         super(Pseudo_random_Interleaver, self).__init__()
@@ -13,7 +12,7 @@ class Pseudo_random_Interleaver(tf.keras.layers.Layer):
     def call(self, x):
         # shape=(batch_size,L,dim)
         p = []
-        # 种子的循环周期为一个batch_size
+        # Period = batch_size
         mseq = np.arange(self.L)
         for i in range(self.batch_size):
             xtmp = tf.slice(x, [i, 0, 0], [1, self.L, self.dim])
@@ -33,7 +32,6 @@ class Pseudo_random_Interleaver(tf.keras.layers.Layer):
         return p
 
 
-# 伪随机解交织器
 class Pseudo_random_DeInterleaver(tf.keras.layers.Layer):
     def __init__(self, batch_size, L, dim):
         super(Pseudo_random_DeInterleaver, self).__init__()
@@ -44,7 +42,7 @@ class Pseudo_random_DeInterleaver(tf.keras.layers.Layer):
     def call(self, x):
         # shape=(batch_size,L,dim)
         y = []
-        # 种子的循环周期为一个batch_size
+        # Period  = batch_size
         mseq = np.arange(self.L)
         for i in range(self.batch_size):
             xtmp = tf.slice(x, [i, 0, 0], [1, self.L, self.dim])
@@ -52,11 +50,10 @@ class Pseudo_random_DeInterleaver(tf.keras.layers.Layer):
             xtmp = tf.reshape(xtmp, shape=(self.L, self.dim))
             # shape=(L,dim)
             np.random.seed(i)
-            # 将标号按照相同的seed进行打乱
+
             mshuf = np.random.permutation(mseq)
             indices = tf.argsort(mshuf)
-            # argsort将标号按照从小到大排序，返回值为将标号恢复正常顺序的index
-            # 同理这也是被打乱bit的恢复index
+
             ytmp = tf.gather(xtmp, indices)
             ytmp = tf.reshape(ytmp, shape=(1, self.L, self.dim))
             # shape=(1,L,dim)
@@ -67,7 +64,7 @@ class Pseudo_random_DeInterleaver(tf.keras.layers.Layer):
                 # shape=(batch_size,L,dim)
         return y
 
-# 一个batch_size进行交织
+
 class BC_Pseudo_random_Interleaver(tf.keras.layers.Layer):
     def __init__(self, batch_size,L,dim):
         super(BC_Pseudo_random_Interleaver, self).__init__()
