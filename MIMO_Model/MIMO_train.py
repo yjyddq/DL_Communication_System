@@ -14,8 +14,6 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from tensorflow.keras.optimizers import Adam
 
-from DL_Communication_System.Coding_Unit.coding_unit import coding_unit
-from DL_Communication_System.Interleaver.Pseudo_Random import Pseudo_random_Interleaver,Pseudo_random_DeInterleaver
 from DL_Communication_System.Coding_Unit.Encoder import Encoder_CNN_PRI
 from DL_Communication_System.Coding_Unit.Decoder import Decoder_CNN_PRI
 from DL_Communication_System.Channel.Channel import OFDM,DeOFDM,AWGN_four_Channel
