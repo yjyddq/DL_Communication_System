@@ -1,5 +1,5 @@
 import tensorflow as tf
-from communication.Communication_DL.Coding_Unit.coding_unit import coding_unit
+from DL_Communication_System.Coding_Unit.coding_unit import coding_unit
 
 
 class Modulator(tf.keras.layers.Layer):
