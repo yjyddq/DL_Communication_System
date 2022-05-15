@@ -6,7 +6,7 @@ from tensorflow.keras.layers import Dense,LSTM,Lambda
 from communication.Communication_DL.Power_Norm.power_norm import normalization
 
 import numpy as np
-# 无训练参数模块都认为是Channel
+
 
 '''SISO Channel'''
 class AWGN_Channel(tf.keras.layers.Layer):
@@ -21,7 +21,7 @@ class AWGN_Channel(tf.keras.layers.Layer):
 class ISI(tf.keras.layers.Layer):
     def __init__(self,L,k,n,W):
         super(ISI,self).__init__()
-        self.W = W # ISI窗口，即t时刻的码元受前W个时刻的码元影响
+        self.W = W # ISI windows
         self.L = L
         self.k = k
         self.n = n
@@ -85,7 +85,7 @@ class Bursty_Channel(tf.keras.layers.Layer):
         return y
 
 
-# 将I-Q 2位实数转换为一位的复数
+# I-Q real to complex
 def real_convert_to_complex(x):
     # shape=(batch_size,L,2)
     x_real = tf.slice(x,[0,0,0],[tf.shape(x)[0],tf.shape(x)[1],tf.shape(x)[-1]//2])
@@ -94,7 +94,7 @@ def real_convert_to_complex(x):
     # shape=(batch_size,L,1)
     return xc
 
-# 将I-Q 2位实数转换为一位的复数
+# I-Q complex to real
 def complex_convert_to_real(xc):
     # shape=(batch_size,L,1)
     x_real = tf.math.real(xc)
@@ -115,7 +115,7 @@ class AWGN_four_Channel(tf.keras.layers.Layer):
         y = f + wc
         return y
 
-# 正交频分复用
+# OFDM Multiplexing
 class OFDM(tf.keras.layers.Layer):
     def __init__(self,m):
         super(OFDM,self).__init__()
@@ -148,7 +148,7 @@ class OFDM(tf.keras.layers.Layer):
         f = real_convert_to_complex(f)
         return f
 
-# 解复用
+# OFDM De-Multiplexing
 class DeOFDM(tf.keras.layers.Layer):
     def __init__(self,m):
         super(DeOFDM,self).__init__()
@@ -181,17 +181,17 @@ class Rayleigh_four_Channel(tf.keras.layers.Layer):
         super(Rayleigh_four_Channel,self).__init__()
         self.noise_sigma=noise_sigma
     def call(self,x1,x2,x3,x4):
-        # 将实部、虚部转化为复数
+        
         x1c = real_convert_to_complex(x1)
         x2c = real_convert_to_complex(x2)
         x3c = real_convert_to_complex(x3)
         x4c = real_convert_to_complex(x4)
-        # 加性噪声
+        
         w1 = real_convert_to_complex(KR.random_normal(KR.shape(x1), mean=0.0, stddev=self.noise_sigma))
         w2 = real_convert_to_complex(KR.random_normal(KR.shape(x2), mean=0.0, stddev=self.noise_sigma))
         w3 = real_convert_to_complex(KR.random_normal(KR.shape(x3), mean=0.0, stddev=self.noise_sigma))
         w4 = real_convert_to_complex(KR.random_normal(KR.shape(x4), mean=0.0, stddev=self.noise_sigma))
-        # 乘性噪声
+        
         h_1_1c = real_convert_to_complex(KR.random_normal(KR.shape(x1), mean=0.0, stddev=np.sqrt(1 / 2)))
         h_1_2c = real_convert_to_complex(KR.random_normal(KR.shape(x1), mean=0.0, stddev=np.sqrt(1 / 2)))
         h_1_3c = real_convert_to_complex(KR.random_normal(KR.shape(x1), mean=0.0, stddev=np.sqrt(1 / 2)))
@@ -223,7 +223,7 @@ class Rayleigh_four_Channel(tf.keras.layers.Layer):
 
         y4_complex = tf.multiply(h_1_4c, x1c) + tf.multiply(h_2_4c, x2c) + \
              tf.multiply(h_3_4c, x3c) + tf.multiply(h_4_4c, x4c) + w4
-        # 提取复数的实部虚部
+        
         y1_real = tf.math.real(y1_complex)
         y1_imag = tf.math.imag(y1_complex)
         y1 = tf.concat([y1_real,y1_imag],axis=-1)
@@ -243,7 +243,7 @@ class Rayleigh_four_Channel(tf.keras.layers.Layer):
         return y1,y2,y3,y4
 
 def Construct_Hermit(num,batch_size,Ln=None):
-    # num从2起,取2**n
+    
     Z = []
     a_base = tf.cast([[1,1],[0,0]],tf.float32)
     b_base = tf.cast([[0,0],[1,-1]],tf.float32)
@@ -260,14 +260,14 @@ def Construct_Hermit(num,batch_size,Ln=None):
             Z_down = tf.concat([Z, -Z], axis=1)  # shape=(2,4)
             Z = tf.concat([Z_up, Z_down], axis=0)  # shape=(4,4)
     # Z = Z/np.sqrt(num)
-    Zconj = tf.math.conj(Z) # 共轭
-    ZjT = tf.transpose(Zconj) # 转置
+    Zconj = tf.math.conj(Z)
+    ZjT = tf.transpose(Zconj) 
     # shape=(num,num)
     Z = tf.expand_dims(Z, axis=0)
     ZjT = tf.expand_dims(ZjT, axis=0)
     Z = tf.broadcast_to(Z, [batch_size, num, num])
     ZjT = tf.broadcast_to(ZjT, [batch_size, num, num])
-    # 均为复数
+   
     if Ln != None:
         Z = tf.expand_dims(Z, axis=1)
         ZjT = tf.expand_dims(ZjT, axis=1)
@@ -293,7 +293,7 @@ class Code_Multiplexing(tf.keras.layers.Layer):
         xc = tf.concat([x0c,x1c,x2c,x3c],axis=1)
         # x shape=(batch_size,m,L*n,1)
         # hermit shape=(batch_size,L*n,num,num)
-        # 将L*n长度的数据按照num进行分组
+        
         xc = tf.transpose(xc,perm=[0,2,1,3])
         # x shape=(batch_size,L*n,m,1)
         yc = tf.matmul(self.Z,xc)
