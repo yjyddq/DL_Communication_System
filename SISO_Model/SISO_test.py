@@ -78,23 +78,24 @@ for Eb_N0_dB in range(0, 16):
     noise_sigma = np.sqrt(1 / (2 * 10 ** (Eb_N0_dB / 10)))
 
     # Define Encoder Layers (Transmitter)
-    model_input = Input(batch_shape=(batch_size, L, 1), name='input_bits')
+    model_input = Input(batch_shape=(batch_size, L,1), name='input_bits')
 
-    e = Encoder(L)(model_input)
+    e = Encoder(batch_size,L,dim,k,n)(model_input)
 
     e_power = Lambda(normalization)(e)
 
+    y_h = AWGN_Channel(noise_sigma)(e_power)
 
-    y_h = Rayleigh_Channel(noise_sigma)(e_power)
+    model_output=Decoder(batch_size,L,dim,k,n)(y_h)
 
 
-    model_output = Decoder(L)(y_h)
     # Build System Model
     sys_model = Model(model_input, model_output)
+    encoder = Model(model_input, e)
 
 
     # Load Weights from the trained NN
-    sys_model.load_weights(r'E:\pycharm\communication\Memory_code\Turbo Rayleigh\5dB\DeepTurbo_1_100_3_5dB Rayleigh.h5')
+    sys_model.load_weights('./DeepTurbo_1_100_3_2dB AWGN.h5')
 
     '''
     RUN THE NN
@@ -102,7 +103,7 @@ for Eb_N0_dB in range(0, 16):
 
     # RUN Through the Model and get output
 
-    decoder_output = sys_model.predict(train_data, batch_size=batch_size)
+    decoder_output = sys_model.predict(test_data, batch_size=batch_size)
         # shape=(num_of_sym,L,1)
 
     '''
@@ -111,9 +112,9 @@ for Eb_N0_dB in range(0, 16):
 
     # Decode One-Hot vector
     position = np.argmax(decoder_output, axis=2)
-    tmp = np.reshape(position, newshape=train_data.shape)
+    tmp = np.reshape(position, newshape=test_data.shape)
 
-    error_rate = np.mean(np.not_equal(train_data, tmp))
+    error_rate = np.mean(np.not_equal(test_data, tmp))
 
     print('Eb/N0 = ', Eb_N0_dB)
     print('BLock Error Rate = ', error_rate)
