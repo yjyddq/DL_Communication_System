@@ -1,10 +1,10 @@
 import tensorflow as tf
 from tensorflow.keras.layers import LSTM,Dense,Bidirectional
 
-from communication.Communication_DL.Coding_Unit.coding_unit import coding_unit
-from communication.Communication_DL.Interleaver.Block import Se_Block_Interleaver
-from communication.Communication_DL.Interleaver.Pseudo_Random import Pseudo_random_Interleaver
-from communication.Communication_DL.Coding_Unit.Modulation import Modulator
+from DL_Communication_System.Coding_Unit.coding_unit import coding_unit
+from DL_Communication_System.Interleaver.Block import Se_Block_Interleaver
+from DL_Communication_system.Interleaver.Pseudo_Random import Pseudo_random_Interleaver
+from DL_Communication_System.Coding_Unit.Modulation import Modulator
 
 '''CNN'''
 class Encoder_CNN_PRI(tf.keras.layers.Layer):
