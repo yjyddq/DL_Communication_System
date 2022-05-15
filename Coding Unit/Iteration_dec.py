@@ -1,12 +1,12 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Conv1D,LSTM,Dense,Bidirectional
 
-from communication.Communication_DL.Coding_Unit.coding_unit import coding_unit
-from communication.Communication_DL.Interleaver.Block import Se_Block_Interleaver,Se_Block_DeInterleaver
-from communication.Communication_DL.Interleaver.Pseudo_Random import Pseudo_random_Interleaver,Pseudo_random_DeInterleaver
+from DL_Communication_System.Coding_Unit.coding_unit import coding_unit
+from DL_Communication_System.Interleaver.Block import Se_Block_Interleaver,Se_Block_DeInterleaver
+from DL_Communication_System.Interleaver.Pseudo_Random import Pseudo_random_Interleaver,Pseudo_random_DeInterleaver
 
-# 迭代单元可以使用两种结构，一种是CNN
-# 另一种是BiRNN (LSTM or GRU)
+# CNN
+# BiRNN (LSTM or GRU)
 '''CNN'''
 class Iteration_dec_CNN_SBI(tf.keras.layers.Layer):
     def __init__(self,L,dim,B):
