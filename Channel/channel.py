@@ -135,8 +135,7 @@ class OFDM(tf.keras.layers.Layer):
         xc = tf.transpose(xc,perm=[0,2,1,3])
         # shape=(batch_size,L,m,1)
         xc = tf.squeeze(xc,axis=-1)
-        # fft是只对最后一个维度做fft
-        # 所以这里在做fft之前，先要进行维度的压缩
+
         yc= tf.signal.ifft(xc)*self.m
 
         yc = tf.expand_dims(yc,axis=-1)
