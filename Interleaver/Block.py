@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-# 顺序分组交织器
+
 class Se_Block_Interleaver(tf.keras.layers.Layer):
     def __init__(self,part_len,part_num):
         super(Se_Block_Interleaver,self).__init__()
@@ -20,7 +20,7 @@ class Se_Block_Interleaver(tf.keras.layers.Layer):
         y = tf.reshape(y,shape=(tf.shape(x)[0],self.part_num*self.part_num,1))
         return y
 
-# 顺序分组解交织器
+
 class Se_Block_DeInterleaver(tf.keras.layers.Layer):
     def __init__(self,part_len,part_num):
         super(Se_Block_DeInterleaver,self).__init__()
@@ -40,7 +40,7 @@ class Se_Block_DeInterleaver(tf.keras.layers.Layer):
         y = tf.reshape(y, shape=(tf.shape(x)[0], self.part_num*self.part_num, 1))
         return y
 
-# 逆序分组交织器
+
 class Re_Block_Interleaver(tf.keras.layers.Layer):
     def __init__(self,part_len,part_num):
         super(Re_Block_Interleaver,self).__init__()
@@ -60,7 +60,7 @@ class Re_Block_Interleaver(tf.keras.layers.Layer):
         y = tf.reshape(y, shape=(tf.shape(x)[0], self.part_num * self.part_num, 1))
         return y
 
-# 逆序分组解交织器
+
 class Re_Block_DeInterleaver(tf.keras.layers.Layer):
     def __init__(self,part_len,part_num):
         super(Re_Block_DeInterleaver,self).__init__()
