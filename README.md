@@ -12,4 +12,4 @@ Numpy
 Tensorflow  
 Keras  
 
-![1](./pure_TurboAE-MOD compare to Complex_CNN_Modulation.png)
+![1](/pure_TurboAE-MOD compare to Complex_CNN_Modulation.png)
