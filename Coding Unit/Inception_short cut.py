@@ -1,8 +1,8 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Conv1D,Dense,Activation
 
-from communication.Communication_DL.Coding_Unit.coding_unit import coding_unit
-from communication.Communication_DL.Interleaver.Pseudo_Random import Pseudo_random_Interleaver,Pseudo_random_DeInterleaver
+from DL_Communication_System.Coding_Unit.coding_unit import coding_unit
+from DL_Communication_System.Interleaver.Pseudo_Random import Pseudo_random_Interleaver,Pseudo_random_DeInterleaver
 
 
 class Inception_Block(tf.keras.layers.Layer):
@@ -31,7 +31,6 @@ class Modulator(tf.keras.layers.Layer):
         self.n = n
         self.k = k
         self.dim = dim
-        # 调制是将bit打包，然后映射为星座图上的坐标点
         self.map = coding_unit(dim,1,1,'elu')
         self.modulation = coding_unit(2,1,1,'linear')
     def call(self,x):
