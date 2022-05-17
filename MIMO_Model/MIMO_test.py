@@ -12,7 +12,7 @@ import tensorflow as tf
 
 from DL_Communication_System.Coding_Unit.Encoder import Encoder_CNN_PRI
 from DL_Communication_System.Coding_Unit.Decoder import Decoder_CNN_PRI
-from DL_Communication_System.Channel.Channel import OFDM,DeOFDM,AWGN_four_Channel
+from DL_Communication_System.Channel.channel import OFDM,DeOFDM,AWGN_four_Channel
 from DL_Communication_System.Power_Norm.power_norm import normalization
 
 '''
